@@ -11,7 +11,7 @@ import math.Angle;
  *
  * @author Benoît
  */
-public class BoundingCircle {
+public class BoundingCircle extends BoundingShape {
  
     public Point2D center;
     public double radius;
@@ -21,7 +21,16 @@ public class BoundingCircle {
         this.radius = radius;
     }
     
-    public boolean collide(BoundingCircle o){
+    @Override
+    public boolean collide(BoundingShape shape){
+        if(shape instanceof BoundingCircle)
+            return collideCircle((BoundingCircle)shape);
+        if(shape instanceof AlignedBoundingBox)
+            return collideABB((AlignedBoundingBox)shape);
+        throw new IllegalArgumentException(shape.getClass().getSimpleName()+" is not yet supported.");
+    }
+    
+    private boolean collideCircle(BoundingCircle o){
         if(center.getDistance(o.center) < radius+o.radius)
             return true;
         else
@@ -35,7 +44,7 @@ public class BoundingCircle {
             return false;
     }
     
-    public boolean collide(AlignedBoundingBox box) {
+    private boolean collideABB(AlignedBoundingBox box) {
         // first we check collision between boxes
         if(box.collide(getABB())){
             // first case : the box has one of its sum inside the circle
@@ -70,4 +79,11 @@ public class BoundingCircle {
         bounds.add(center.getTranslation(Angle.FLAT, radius));
         return new AlignedBoundingBox(bounds);
     }
+
+    @Override
+    public Point2D getCenter() {
+        return new Point2D(center);
+    }
+    
+    
 }

@@ -8,7 +8,7 @@ import collections.EdgeRing;
 import collections.PointRing;
 
 
-public class AlignedBoundingBox {
+public class AlignedBoundingBox extends BoundingShape {
 
 	public double maxY;
 	public double minY;
@@ -58,7 +58,16 @@ public class AlignedBoundingBox {
 			return false;
 	}
 
-	public boolean collide(AlignedBoundingBox b) {
+        @Override
+        public boolean collide(BoundingShape shape){
+            if(shape instanceof BoundingCircle)
+                return ((BoundingCircle)shape).collide(this);
+            if(shape instanceof AlignedBoundingBox)
+                return collideABB((AlignedBoundingBox)shape);
+            throw new IllegalArgumentException(shape.getClass().getSimpleName()+" is not yet supported.");
+        }
+
+        private boolean collideABB(AlignedBoundingBox b) {
 		if (shareX(b) && shareY(b))
 			return true;
 		return false;
@@ -134,5 +143,9 @@ public class AlignedBoundingBox {
 	public double getArea() {
 		return height*width;
 	}
+        
+        public Point2D getCenter(){
+            return new Point2D(minX+width/2, minY+height/2);
+        }
 
 }
