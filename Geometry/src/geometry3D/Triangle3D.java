@@ -23,9 +23,14 @@ public class Triangle3D {
         this.a = a;
         this.b = b;
         this.c = c;
-        
-        normal = b.getSubtraction(a).getCross(c.getSubtraction(a));
+        try
+        {
+            normal = b.getSubtraction(a).getCross(c.getSubtraction(a));
         normal = normal.getDivision(normal.getNorm());
+        } catch (Exception e) {
+            LogUtil.logger.info(""+this);
+            
+        }
     }
     
     public boolean shareVert(Triangle3D o){
@@ -44,4 +49,28 @@ public class Triangle3D {
         double z = -(normal.x*p.x+normal.y*p.y+factorD)/normal.z;
         return new Point3D(p.x, p.y, z);
     }
+    
+    public Triangle3D getRotationAroundZ(double angle){
+        return new Triangle3D(a.get2D().getRotation(angle).get3D(a.z),
+                b.get2D().getRotation(angle).get3D(b.z),
+                c.get2D().getRotation(angle).get3D(c.z));
+    }
+    
+    public Triangle3D getTranslation(double x, double y, double z){
+        return new Triangle3D(a.getAddition(x, y, z),
+                b.getAddition(x, y, z),
+                c.getAddition(x, y, z));
+    }
+    public Triangle3D getTranslation(Point3D o){
+        return new Triangle3D(a.getAddition(o),
+                b.getAddition(o),
+                c.getAddition(o));
+    }
+
+    @Override
+    public String toString() {
+        return a+"-"+b+"-"+c;
+    }
+    
+    
 }

@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class MyRandom {
 
-	public static long SEED = (long) (Math.random()*10000);
+	public static long SEED = 2;//(long) (Math.random()*10000);
 
 	private static Random r = new Random(SEED);
 //	private static Random r = new Random(System.currentTimeMillis());
