@@ -93,7 +93,7 @@ public class Point3D {
             double norm = getNorm();
             if(norm == 0)
                 throw new RuntimeException("Can't normalize a "+this.getClass().getSimpleName()+" of norm = 0 ("+this+").");
-            return getDivision(getNorm());
+            return getDivision(norm);
         }
         
         public Point3D getCross(Point3D o) {

@@ -6,6 +6,8 @@ package geometry3D;
 
 import geometry.Point2D;
 import geometry3D.Point3D;
+import java.util.ArrayList;
+import math.MyRandom;
 import tools.LogUtil;
 
 /**
@@ -26,9 +28,9 @@ public class Triangle3D {
         try
         {
             normal = b.getSubtraction(a).getCross(c.getSubtraction(a));
-        normal = normal.getDivision(normal.getNorm());
+            normal = normal.getDivision(normal.getNorm());
         } catch (Exception e) {
-            LogUtil.logger.info(""+this);
+            LogUtil.logger.info("error in calculation of normal "+this);
             
         }
     }
@@ -48,6 +50,9 @@ public class Triangle3D {
         double factorD = -(normal.x*a.x+normal.y*a.y+normal.z*a.z);
         double z = -(normal.x*p.x+normal.y*p.y+factorD)/normal.z;
         return new Point3D(p.x, p.y, z);
+    }
+    public Point3D getElevated(Point3D p) {
+        return getElevated(p.get2D());
     }
     
     public Triangle3D getRotationAroundZ(double angle){
@@ -70,6 +75,40 @@ public class Triangle3D {
     @Override
     public String toString() {
         return a+"-"+b+"-"+c;
+    }
+    
+    public ArrayList<Point3D> getCommonPoints(Triangle3D o){
+        ArrayList<Point3D> res = new ArrayList<>();
+        if(a.equals(o.a) || a.equals(o.b) || a.equals(o.c))
+            res.add(a);
+        if(b.equals(o.a) || b.equals(o.b) || b.equals(o.c))
+            res.add(b);
+        if(c.equals(o.a) || c.equals(o.b) || c.equals(o.c))
+            res.add(c);
+        return res;
+    }
+    
+    /**
+     * Elevate the given point on Z axis, for it to be on the triangle plane
+     */
+    public Point3D getZProjection(Point3D p){
+            Point3D A = b.getSubtraction(a);
+            Point3D B = c.getSubtraction(a);
+            Point3D P = p.getSubtraction(a);
+            double subZ = a.z;
+
+            double a = A.x;
+            double d = A.y;
+            double g = A.z;
+            double b = B.x;
+            double e = B.y;
+            double h = B.z;
+            double c = P.x;
+            double f = P.y;
+            double z = (b*f*g+c*d*h-c*e*g-a*f*h)/(b*d-a*e);
+
+
+            return p.getAddition(0, 0, z+subZ);
     }
     
     

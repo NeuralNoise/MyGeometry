@@ -7,6 +7,7 @@ import geometry.Segment2D;
 import java.util.ArrayList;
 
 import collections.PointRing;
+import geometry3D.Polygon3D;
 
 
 public class Triangulator {
@@ -14,11 +15,15 @@ public class Triangulator {
 	private Polygon p;
 	
 	boolean computed;
-	private ArrayList<Integer> indices;
+	private ArrayList<Integer> indices = new ArrayList<Integer>();
 
 	public Triangulator(Polygon p) {
-		indices = new ArrayList<Integer>();
 		this.p = p;
+		computed = false;
+	}
+
+        public Triangulator(Polygon3D p) {
+		this.p = p.proj;
 		computed = false;
 	}
 	
