@@ -7,12 +7,15 @@ import geometry.Segment2D;
 import java.util.ArrayList;
 
 import collections.PointRing;
+import geometry3D.Point3D;
 import geometry3D.Polygon3D;
+import geometry3D.Triangle3D;
 
 
 public class Triangulator {
 
 	private Polygon p;
+	private Polygon3D p3D;
 	
 	boolean computed;
 	private ArrayList<Integer> indices = new ArrayList<Integer>();
@@ -25,11 +28,26 @@ public class Triangulator {
         public Triangulator(Polygon3D p) {
 		this.p = p.proj;
 		computed = false;
+                p3D = p;
 	}
 	
 	public ArrayList<Integer> getIndices(){
 		compute();
 		return indices;
+	}
+
+        public ArrayList<Triangle3D> getTriangles(){
+            if(p3D == null)
+                throw new RuntimeException("Triangles are available only for Polygon 3D triangluation.");
+            
+            ArrayList<Triangle3D> res = new ArrayList<>();
+            compute();
+            for(int i=0; i<indices.size(); i+=3){
+                res.add(new Triangle3D(p3D.points.get(indices.get(i)),
+                        p3D.points.get(indices.get(i+2)),
+                        p3D.points.get(indices.get(i+1))));
+            }
+            return res;
 	}
 
 	public void compute() {
