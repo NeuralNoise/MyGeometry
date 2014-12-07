@@ -162,6 +162,13 @@ public class Point3D {
     public Point2D get2D(){
         return new Point2D(this);
     }
+    
+    public Point3D getRotationAroundZ(double angle){
+        return get2D().getRotation(angle).get3D(z);
+    }
+    public Point3D getRotationAroundZ(double angle, Point2D pivot){
+        return get2D().getRotation(angle, pivot).get3D(z);
+    }
 
 
 
