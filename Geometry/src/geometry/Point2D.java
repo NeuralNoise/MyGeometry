@@ -105,6 +105,9 @@ public class Point2D {
 	public Point2D getMult(double factor) {
 		return new Point2D(x * factor, y * factor);
 	}
+	public Point2D getMult(double factorX, double factorY) {
+		return new Point2D(x * factorX, y * factorY);
+	}
 
 	public Point2D getMultiplication(Point2D other) {
 		return new Point2D(x * other.x, y * other.y);
