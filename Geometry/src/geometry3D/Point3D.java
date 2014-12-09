@@ -169,6 +169,13 @@ public class Point3D {
     public Point3D getRotationAroundZ(double angle, Point2D pivot){
         return get2D().getRotation(angle, pivot).get3D(z);
     }
+    public double getDotProduct(Point3D o){
+        return x*o.x+y*o.y+z*o.z;
+    }
+    
+    public double getAngleWith(Point3D o){
+        return Math.acos(getDotProduct(o)/(getNorm()*o.getNorm()));
+    }
 
 
 
