@@ -134,6 +134,9 @@ public class Point2D {
 	public Point2D getDivision(double factor) {
 		return new Point2D(x / factor, y / factor);
 	}
+	public Point2D getDivision(double factorX, double factorY) {
+		return new Point2D(x / factorX, y / factorY);
+	}
 
 	public Line2D getExtrudedLine(double angle) {
 		Point2D proj = getTranslation(angle, 1);
@@ -164,5 +167,11 @@ public class Point2D {
     
     public Point3D get3D(double z){
         return new Point3D(x, y, z);
+    }
+    
+    public double getManathanDistance(Point2D other){
+        double dx = Math.abs(x - other.x);
+        double dy = Math.abs(y - other.y);
+        return dx + dy;
     }
 }

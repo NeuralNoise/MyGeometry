@@ -8,20 +8,14 @@ public class Map2D<E> {
 	
 	private int xSize;
 	private int ySize;
-	private int resolution;
 	
 	
-	// BEN j'ai essayer de creer une collection pour gere des cartes en 2D, en internalisant au maximum la resolution,
-	// histoire que ça soit transparent dans les codes ou on l'utilise, mais je n'y suis pas parvenu. j'ai toujours besoin de 
-	// me referer a la resolution à l'exterieur du code pour appeller les bonne valeur de la map, donc c'est useless. Si t'as une
-	// idée, je suis preneur.
-	public Map2D(int x, int y, int resolution) {
-		this.resolution = resolution;
-		xSize = x / resolution;
-		ySize = y / resolution;
+	public Map2D(int xSize, int ySize) {
+		this.xSize = xSize;
+		this.ySize = ySize;
 		values = new ArrayList<ArrayList<E>>(xSize);
 		for (int i = 0; i < xSize; i++) {
-			ArrayList<E> row = new ArrayList<E>();
+			ArrayList<E> row = new ArrayList<>();
 			for (int j = 0; j < ySize; j++) {
 				row.add(null);
 			}
@@ -30,11 +24,11 @@ public class Map2D<E> {
 	}
 	
 	public void set(int x, int y, E value) {
-		values.get(x/resolution).set(y/resolution, value);
+		values.get(x).set(y, value);
 	}
 	
 	public E get(int x, int y) {
-		return values.get(x/resolution).get(y/resolution);
+		return values.get(x).get(y);
 	}
 	
 	public ArrayList<E> get(int x) {
