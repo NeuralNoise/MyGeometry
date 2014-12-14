@@ -1,10 +1,11 @@
 package collections;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Map2D<E> {
 	
-	private ArrayList<ArrayList<E>> values;
+	private List<List<E>> values;
 	
 	private int xSize;
 	private int ySize;
@@ -13,9 +14,9 @@ public class Map2D<E> {
 	public Map2D(int xSize, int ySize) {
 		this.xSize = xSize;
 		this.ySize = ySize;
-		values = new ArrayList<ArrayList<E>>(xSize);
+		values = new ArrayList<>(xSize);
 		for (int i = 0; i < xSize; i++) {
-			ArrayList<E> row = new ArrayList<>();
+			List<E> row = new ArrayList<>();
 			for (int j = 0; j < ySize; j++) {
 				row.add(null);
 			}
@@ -31,7 +32,7 @@ public class Map2D<E> {
 		return values.get(x).get(y);
 	}
 	
-	public ArrayList<E> get(int x) {
+	public List<E> get(int x) {
 		return values.get(x);
 	}
 	
