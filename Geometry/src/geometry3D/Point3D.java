@@ -114,6 +114,10 @@ public class Point3D {
         public Point3D getMult(double val) {
             return new Point3D(x*val, y*val, z*val);
         }
+        public Point3D getMult(double xVal, double yVal, double zVal) {
+            return new Point3D(x*xVal, y*yVal, z*zVal);
+            // ahah
+        }
 
     public Point3D getAddition(Point3D o) {
         return new Point3D(x+o.x, y+o.y, z+o.z);
