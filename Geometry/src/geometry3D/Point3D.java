@@ -11,11 +11,15 @@ public class Point3D {
 	public static final Point3D UNIT_X = new Point3D(1, 0, 0);
 	public static final Point3D UNIT_Y = new Point3D(0, 1, 0);
 	public static final Point3D UNIT_Z = new Point3D(0, 0, 1);
+        private static final DecimalFormat df = new DecimalFormat("0.00");
 
 	public double x;
 	public double y;
 	public double z;
 
+        public Point3D(){
+            
+        }
         public Point3D(Point2D p, double elevation){
             this(p.x, p.y, elevation);
         }
@@ -136,7 +140,6 @@ public class Point3D {
                         Math.abs(z - p.z) < Precision.APPROX;
 	}
     
-    private static DecimalFormat df = new DecimalFormat("0.00");
     public String toString() {
             return "(" + df.format(x) + ", " + df.format(y) + ", " + df.format(z) + ")";
     }
