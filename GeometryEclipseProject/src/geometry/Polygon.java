@@ -3,7 +3,6 @@ package geometry;
 import java.util.ArrayList;
 
 import tools.LogUtil;
-
 import math.Angle;
 import collections.EdgeRing;
 import collections.PointRing;
@@ -540,5 +539,12 @@ public class Polygon {
 			res += s.getLength();
 		}
 		return res;
+	}
+	
+	public boolean contains(Point2D p){
+        for(Segment2D s: getEdges())
+            if(Angle.getTurn(s.getStart(), s.getEnd(), p) != Angle.COUNTERCLOCKWISE)
+                return false;
+        return true;
 	}
 }
