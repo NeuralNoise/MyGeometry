@@ -60,15 +60,15 @@ public class Point2D {
 		double dy = y - other.y;
 		return Math.sqrt(dx * dx + dy * dy);
 	}
+	
+	public Point2D getTransformed(Transform2D transform){
+		return transform.getTransformed(this);
+	}
 
 	private static DecimalFormat df = new DecimalFormat("0.00");
 
 	public String toString() {
 		return "(" + df.format(x) + ", " + df.format(y) + ")";
-	}
-
-	public Point2D getDivision(int factor) {
-		return new Point2D(x / factor, y / factor);
 	}
 
 	public Point2D getTranslation(double angle, double distance) {
@@ -109,7 +109,7 @@ public class Point2D {
 		return new Point2D(x * factorX, y * factorY);
 	}
 
-	public Point2D getMultiplication(Point2D other) {
+	public Point2D getMult(Point2D other) {
 		return new Point2D(x * other.x, y * other.y);
 	}
 
@@ -130,14 +130,21 @@ public class Point2D {
 		else
 			return getDivision(length); 
 	}
+	
+	
 
 	public Point2D getDivision(double factor) {
-		return new Point2D(x / factor, y / factor);
+		return getDivision(factor, factor);
+	}
+	public Point2D getDivision(Point2D other) {
+		return getDivision(other.x, other.y);
 	}
 	public Point2D getDivision(double factorX, double factorY) {
 		return new Point2D(x / factorX, y / factorY);
 	}
 
+	
+	
 	public Line2D getExtrudedLine(double angle) {
 		Point2D proj = getTranslation(angle, 1);
 		return new Line2D(this, proj);

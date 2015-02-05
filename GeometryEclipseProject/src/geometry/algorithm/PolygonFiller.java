@@ -87,11 +87,11 @@ public class PolygonFiller {
 	}
 
 	private boolean areOnTheSameSide(Segment2D s1, Segment2D s2) {
-		Point2D p = s1.getCommonPoint(s2);
+		Point2D p = s1.getCommonEnd(s2);
 		if (p == null)
 			throw new RuntimeException("Segments must have one common point.");
-		Point2D q1 = s1.getOther(p);
-		Point2D q2 = s2.getOther(p);
+		Point2D q1 = s1.getOppositeEnd(p);
+		Point2D q2 = s2.getOppositeEnd(p);
 
 		if (q1.y <= p.y && q2.y <= p.y)
 			return true;

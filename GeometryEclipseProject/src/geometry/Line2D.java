@@ -1,6 +1,7 @@
 package geometry;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import geometry.algorithm.Intersector;
 import math.Angle;
@@ -79,21 +80,6 @@ public class Line2D {
 		return p1;
 	}
 
-	/*
-	 * Returns true if two points occupy the same coordinate space.
-	 */
-	public boolean hasCommonPoint(Line2D other) {
-		return p0.equals(other.p0) || p0.equals(other.p1) || p1.equals(other.p0) || p1.equals(other.p1);
-	}
-
-	public Point2D getCommonPoint(Line2D other) {
-		if (p0.equals(other.p0) || p0.equals(other.p1))
-			return p0;
-		if (p1.equals(other.p0) || p1.equals(other.p1))
-			return p1;
-		return null;
-	}
-
 	public double getAngle() {
 		return p1.getSubtraction(p0).getAngle();
 	}
@@ -107,7 +93,7 @@ public class Line2D {
 	}
 
 	public boolean isCollinear(Line2D other) {
-		return isOver(other.p0, other.p1) && other.isOver(p0, p1);
+		return contains(other.p0) && contains(other.p1) && other.contains(p0) && other.contains(p1);
 	}
 
 	public boolean isBetweenOrOver(Point2D q0, Point2D q1) {
@@ -134,27 +120,15 @@ public class Line2D {
 		return p0.getSlope(p1);
 	}
 
-	public boolean isOver(Point2D q) {
-		return Angle.getTurn(p0, p1, q) == Angle.NONE;
+	public boolean contains(Point2D p) {
+		return Angle.getTurn(p0, p1, p) == Angle.NONE;
 	}
 
-	public boolean isOver(Point2D q0, Point2D q1) {
-		return isOver(q0) && isOver(q1);
-	}
-
-	public ArrayList<Point2D> getPoints() {
-		ArrayList<Point2D> res = new ArrayList<Point2D>();
+	public List<Point2D> getPoints() {
+		List<Point2D> res = new ArrayList<Point2D>();
 		res.add(p0);
 		res.add(p1);
 		return res;
-	}
-
-	public Point2D getOther(Point2D p) {
-		if (p0 == p)
-			return p1;
-		if (p1 == p)
-			return p0;
-		throw new RuntimeException(this.getClass().getName() + " doesn't have such point.");
 	}
 
 	public double getShortestDistance(Point2D p) {
@@ -162,6 +136,10 @@ public class Line2D {
 		double t = p.getSubtraction(p0).getDotProduct(p1.getSubtraction(p0)) / sqrLength;
 		Point2D proj = p0.getAddition(p1.getSubtraction(p0).getMult(t));
 		return p.getDistance(proj);
+	}
+	
+	public Line2D getTransformed(Transform2D transform){
+		return new Line2D(p0.getTransformed(transform), p1.getTransformed(transform));
 	}
 
 }

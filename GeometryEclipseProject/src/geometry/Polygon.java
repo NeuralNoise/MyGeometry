@@ -84,7 +84,7 @@ public class Polygon {
 			for (Segment2D e2 : edges) {
 				if (e1 == e2)
 					continue;
-				if (e1.hasCommonPoint(e2))
+				if (e1.hasCommonEnd(e2))
 					continue;
 				if (e1.intersectAtSinglePoint(e2)) {
 					Point2D intersection = e1.getUniqueIntersection(e2);
@@ -452,7 +452,7 @@ public class Polygon {
 
 	public boolean hasIntersectingDiagonal(Segment2D diagonal) {
 		for (Segment2D edge : getEdges()) {
-			if (edge.hasCommonPoint(diagonal))
+			if (edge.hasCommonEnd(diagonal))
 				continue;
 			if (edge.intersectAtSinglePoint(diagonal)) {
 				return true;
