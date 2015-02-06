@@ -1,11 +1,9 @@
-package collections;
-
-import geometry.Point2D;
-import geometry.Segment2D;
-import geometry.Transform2D;
+package geometry;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import math.Angle;
 
 public class Polyline2D extends ArrayList<Segment2D>{
 	
@@ -46,5 +44,32 @@ public class Polyline2D extends ArrayList<Segment2D>{
 		for(Segment2D s : this)
 			res.add(s.getTransformed(transform));
 		return res;
+	}
+	
+	public Point2D getFirstPoint(){
+		return get(0).getStart();
+	}
+	public Point2D getLastPoint(){
+		return get(size()-1).getEnd();
+	}
+	
+	public boolean isLoop(){
+		return getFirstPoint().equals(getLastPoint());
+	}
+	
+	public boolean hasInside(Point2D p){
+		if(!isLoop())
+			return false;
+		int turn = Angle.NONE;
+		for(Segment2D s : this){
+			int localTurn = Angle.getTurn(s.getStart(), s.getEnd(), p);
+			if(localTurn == Angle.NONE)
+				return true;
+			if(turn == Angle.NONE)
+				turn = localTurn;
+			else if(turn != localTurn)
+				return false;
+		}
+		return true;
 	}
 }

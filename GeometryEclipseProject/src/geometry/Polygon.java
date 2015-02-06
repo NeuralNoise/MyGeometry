@@ -541,7 +541,7 @@ public class Polygon {
 		return res;
 	}
 	
-	public boolean contains(Point2D p){
+	public boolean hasInside(Point2D p){
         for(Segment2D s: getEdges())
             if(Angle.getTurn(s.getStart(), s.getEnd(), p) != Angle.COUNTERCLOCKWISE)
                 return false;

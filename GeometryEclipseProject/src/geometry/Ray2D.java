@@ -109,16 +109,18 @@ public class Ray2D extends Line2D{
             // (since t1 uses -b - discriminant)
             // Impale, Poke
               res.add(p0.getTranslation(p0.getAngle(), t1));
-          } else
-              res.add(null);
+          }
+//          else
+//              res.add(null);
 
           // here t1 didn't intersect so we are either started
           // inside the sphere or completely past it
           if(t2 >= 0 && t2 <= 1) {
             // ExitWound
             res.add(p0.getTranslation(p0.getAngle(), t2));
-          } else
-              res.add(null);
+          }
+//          else
+//              res.add(null);
           // no intn: FallShort, Past, CompletelyInside
         }
         return res;
