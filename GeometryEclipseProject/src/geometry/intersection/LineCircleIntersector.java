@@ -7,6 +7,8 @@ import geometry.Ray2D;
 
 import java.util.ArrayList;
 
+import tools.LogUtil;
+
 public class LineCircleIntersector {
 	
 	Line2D line;
@@ -19,9 +21,10 @@ public class LineCircleIntersector {
 		this.line = l;
 		p0 = line.getStart();
 		p1 = line.getEnd();
-		if(line instanceof Line2D)
+		Class cl = line.getClass();
+		if(cl.equals(Line2D.class))
 			p0 = p0.getTranslation(line.getAngle(), -1000000);
-		if(line instanceof Line2D || line instanceof Ray2D)
+		if(cl.equals(Line2D.class) || cl.equals(Ray2D.class))
 			p1 = p1.getTranslation(line.getAngle(), 1000000);
 		this.circle = c;
 		compute();
@@ -43,7 +46,7 @@ public class LineCircleIntersector {
         // d = direction vector of the segment
         Point2D d = p1.getSubtraction(p0);
         // f = vector from center to ray start
-        Point2D f = p1.getSubtraction(circle.center);
+        Point2D f = p0.getSubtraction(circle.center);
         
         double a = d.getDotProduct(d);
         double b = 2*f.getDotProduct(d);
@@ -74,13 +77,13 @@ public class LineCircleIntersector {
         		// t1 is the intersection, and it's closer than t2
         		// (since t1 uses -b - discriminant)
         		// Impale, Poke
-        		i1 = p0.getTranslation(line.getAngle(), t1);
+        		i1 = p0.getTranslation(line.getAngle(), t1*p0.getDistance(p1));
 
         	// here t1 didn't intersect so we are either started
         	// inside the sphere or completely past it
         	if(t2 >= 0 && t2 <= 1)
         		// ExitWound
-        		i2 = p0.getTranslation(line.getAngle(), t2);
+        		i2 = p0.getTranslation(line.getAngle(), t2*p0.getDistance(p1));
         	// no intn: FallShort, Past, CompletelyInside
         }
         
