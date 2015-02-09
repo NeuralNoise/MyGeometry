@@ -1,7 +1,10 @@
-package geometry.algorithm;
+package geometry.intersection;
 
+import tools.LogUtil;
 import geometry.Line2D;
 import geometry.Point2D;
+import geometry.Ray2D;
+import geometry.Segment2D;
 import math.Angle;
 import math.Precision;
 
@@ -19,90 +22,109 @@ import math.Precision;
  * 
  * Please note that the intersection calculation is computed with division and is not absolutely precise.
  * 
- * For information, the Angle.getTurn(a, b, c) method uses determinant to check the turning sense. * @author Beno�t
- * Dumas
+ * For information, the Angle.getTurn(a, b, c) method uses determinant to check the turning sense.
  * 
  * @author Beno�t Dumas
  * @version $Id$
  */
-public class Intersector {
+public class LineLineIntersector {
 
-	enum Type {UNKNOWN, PARALLEL, INTERSECT, COLLINEAR, INVALID}
+	enum Type {PARALLEL, INTERSECT, COLLINEAR, INVALID}
 
-	private Point2D p0, p1, q0, q1;
+	private final Line2D line1, line2;
+	Point2D p0, p1, q0, q1;
 
-	private Point2D intersection, intersectionStart, intersectionEnd;
+	public Intersection intersection = null;
 	private Type result;
-	private boolean inPLimits;
-	private boolean inQLimits;
-
-	/**
-	 * Constructs a new Intersector with four line's vectors.
-	 */
-	public Intersector(Point2D p0, Point2D p1, Point2D q0, Point2D q1) {
-		intersection = null;
-		intersectionStart = null;
-		intersectionEnd = null;
-		inPLimits = false;
-		inQLimits = false;
-		this.p0 = p0;
-		this.p1 = p1;
-		this.q0 = q0;
-		this.q1 = q1;
-
-		// We compute the result only if the access methods are called.
-		// Doing that, we may launch some very fast tests for segment to segment intersection
-		// and increase Intersector performance.
-		result = Type.UNKNOWN;
-	}
+	private boolean inPLimits = false;
+	private boolean inQLimits = false;
 
 	/**
 	 * Constructs a new Intersector with two lines.
 	 */
-	public Intersector(Line2D p, Line2D q) {
-		this(p.getStart(), p.getEnd(), q.getStart(), q.getEnd());
+	public LineLineIntersector(Line2D line1, Line2D line2) {
+		this.line1 = line1.getBoundedRepresentation();
+		this.line2 = line2.getBoundedRepresentation();
+		p0 = this.line1.getStart();
+		p1 = this.line1.getEnd();
+		q0 = this.line2.getStart();
+		q1 = this.line2.getEnd();
 		
+		result = establishIntersectionType();
 	}	
 	
+	public boolean hasIntersection(){
+		if(result == Type.INTERSECT || result == Type.COLLINEAR)
+			return isInLimit();
+		return false;
+	}
+	public boolean hasUniqueIntersection(){
+		if(result == Type.INTERSECT)
+			return isInLimit();
+		return false;
+	}
+	
+	private boolean isInLimit(){
+		return inPLimits && inQLimits;
+		
+//		Class c1 = line1.getClass();
+//		Class c2 = line2.getClass();
+//		
+//		if(c1 == Line2D.class && c2 == Line2D.class)
+//			// line/line
+//			return true;
+//		else if(c1 == Line2D.class && c2 == Segment2D.class)
+//			// line/segment
+//			return inQLimits;
+//		else if(c1 == Line2D.class && c2 == Ray2D.class)
+//			// line/ray
+//			return inQLimits;
+//		else if(c1 == Segment2D.class && c2 == Line2D.class)
+//			// segment/line
+//			return inPLimits;
+//		else if(c1 == Segment2D.class && c2 == Segment2D.class)
+//			// segment/segment
+//			return inPLimits && inQLimits;
+//		else if(c1 == Segment2D.class && c2 == Ray2D.class)
+//			// segment/ray
+//			return inPLimits && inQLimits;
+//		else if(c1 == Ray2D.class && c2 == Line2D.class)
+//			// ray/line
+//			return inPLimits;
+//		else if(c1 == Ray2D.class && c2 == Segment2D.class)
+//			// ray/segment
+//			return inPLimits && inQLimits;
+//		else if(c1 == Ray2D.class && c2 == Ray2D.class)
+//			// ray/ray
+//			return inPLimits && inQLimits;
+//		return false;
+	}
+	
 	public boolean hasLineToLineIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT || result == Type.COLLINEAR;
 	}
 
 	public boolean hasUniqueLineToLineIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT;
 	}
 
 	public boolean hasSegmentToLineIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT && inPLimits || result == Type.COLLINEAR && inPLimits;
 	}
 
 	public boolean hasUniqueSegmentToLineIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT && inPLimits;
 	}
 
 	public boolean hasSegmentToSegmentIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT && inPLimits && inQLimits || result == Type.COLLINEAR && inPLimits && inQLimits;
 	}
 
 	public boolean hasUniqueSegmentToSegmentIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.INTERSECT && inPLimits && inQLimits;
 	}
 
 	public boolean isCollinear() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
 		return result == Type.COLLINEAR;
 	}
 
@@ -111,70 +133,17 @@ public class Intersector {
 	 * 
 	 * @return single intersection point, or null if none or more than one exists.
 	 */
-	public Point2D getUniqueIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
-		if (result == Type.COLLINEAR || result == Type.PARALLEL)
-			return null;
-
+	public Intersection getIntersection() {
 		if (intersection == null)
 			computeIntersectionPoint();
 		return intersection;
 	}
 
-	/**
-	 * This method returns any intersection point found.
-	 * 
-	 * @return a single intersection point, or the middle point of the intersection zone, or null if none exists.
-	 */
-	public Point2D getAnyIntersection() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
-		if (intersection == null)
-			computeIntersectionPoint();
-		return intersection;
-	}
-
-	/**
-	 * This method returns the start of the intersection zone. If the lines are intersecting on a single point, it
-	 * returns this point.
-	 * 
-	 * @return the end point of the intersection zone, or the single intersection point, or null if none exists.
-	 */
-	public Point2D getIntersectionZoneStart() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
-		if (intersection == null)
-			computeIntersectionPoint();
-		if (intersectionStart == null)
-			return intersection;
-		return intersectionStart;
-	}
-
-	/**
-	 * This method returns the end of the intersection zone. If the lines are intersecting on a single point, it returns
-	 * this point.
-	 * 
-	 * @return the end point of the intersection zone, or the single intersection point, or null if none exists.
-	 */
-	public Point2D getIntersectionZoneEnd() {
-		if (result == Type.UNKNOWN)
-			result = computeIntersectionResult();
-		if (intersection == null)
-			computeIntersectionPoint();
-		if (intersectionEnd == null)
-			return intersection;
-		return intersectionEnd;
-	}
-
-	private Type computeIntersectionResult() {
+	private Type establishIntersectionType() {
 		// for each end point, find the side of the other line.
 		// if two end points lie on opposite sides of the other line, then the lines are crossing.
 		// if all end points lie on opposite sides, then the segments are crossing.
 
-		double pAngle = p1.getSubtraction(p0).getAngle();
-		double qAngle = q1.getSubtraction(q0).getAngle();
-		
 		double Pq0 = Angle.getTurn(p0, p1, q0);
 		double Pq1 = Angle.getTurn(p0, p1, q1);
 
@@ -228,7 +197,12 @@ public class Intersector {
 			return Type.INTERSECT;
 	}
 
+	
+	
+	
+	
 	private void computeIntersectionPoint() {
+		intersection = new Intersection();
 		if (result == Type.INTERSECT) {
 			/*
 			 * Single point intersection
@@ -264,7 +238,7 @@ public class Intersector {
 				x = (pOrdinate - qOrdinate) / (qSlope - pSlope);
 				y = pSlope * x + pOrdinate;
 			}
-			intersection = new Point2D(x, y);
+			intersection.point = new Point2D(x, y);
 			
 		} else if (result == Type.COLLINEAR) {
 			/*
@@ -280,41 +254,40 @@ public class Intersector {
 			 */
 			if (q0.getDistance(p0) <= p0.getDistance(p1) && q0.getDistance(p1) <= p0.getDistance(p1)) {
 				// then q0 is in P
-				intersectionStart = q0;
+				intersection.zoneStart = q0;
 				if (q1.getDistance(p0) <= p0.getDistance(p1) && q1.getDistance(p1) <= p0.getDistance(p1)) {
 					// then q0 and q1 are both in P
 					System.out.println("(collinear) Q is in P");
-					intersectionEnd = q1;
+					intersection.zoneEnd = q1;
 				} else // then q0 is in P but q1 is out of P
 				if (p0.getDistance(q0) <= q0.getDistance(q1) && q0.getDistance(p1) <= q0.getDistance(q1))
 					// then q0 is in P and p0 is in Q
-					intersectionEnd = p0;
+					intersection.zoneEnd = p0;
 				else
-					intersectionEnd = p1;
+					intersection.zoneEnd = p1;
 			} else // then q0 is out of p
 			if (q1.getDistance(p0) <= p0.getDistance(p1) && q1.getDistance(p1) <= p0.getDistance(p1)) {
 				// then q0 is out of P and q1 is in P
-				intersectionStart = q1;
+				intersection.zoneStart = q1;
 				if (p0.getDistance(q0) <= q0.getDistance(q1) && q0.getDistance(p1) <= q0.getDistance(q1))
 					// then q1 is in P and p0 is in Q
-					intersectionEnd = p0;
+					intersection.zoneEnd = p0;
 				else
-					intersectionEnd = p1;
+					intersection.zoneEnd = p1;
 			} else { // then q0 and q1 are both out of P
 				if (p0.getDistance(q0) <= q0.getDistance(q1) && q0.getDistance(p1) <= q0.getDistance(q1)) {
 					// then P is in Q
 					System.out.println("(collinear) P is in Q");
-					intersectionStart = p0;
-					intersectionEnd = p1;
+					intersection.zoneStart = p0;
+					intersection.zoneEnd = p1;
 				} else {
-					System.out.println(Intersector.class.getName() + " (collinear) and Q and P are not overlapped.");
-					intersectionStart = null;
-					intersectionEnd = null;
+					System.out.println(LineLineIntersector.class.getName() + " (collinear) and Q and P are not overlapped.");
+					intersection.zoneStart = null;
+					intersection.zoneEnd = null;
 					intersection = null;
 					return;
 				}
 			}
-			intersection = intersectionEnd.getSubtraction(intersectionStart).getDivision(2);
 		} else
 			throw new RuntimeException("Intersection point cannot be computed if result is parallel or invalild.");
 	}

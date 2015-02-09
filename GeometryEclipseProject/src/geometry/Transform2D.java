@@ -5,7 +5,7 @@ public class Transform2D {
 	double angle = 0;
 	Point2D pivot = Point2D.ORIGIN;
 	Point2D translation = Point2D.ORIGIN;
-	Point2D scale;
+	Point2D scale = Point2D.UNIT_XY;
 	
 	public Transform2D() {
 	}
@@ -77,6 +77,14 @@ public class Transform2D {
 		Point2D res = p.getSubtraction(translation);
 		res = res.getRotation(-angle, pivot);
 		res = res.getDivision(scale);
+		return res;
+	}
+
+	public Transform2D getInverse() {
+		Transform2D res = new Transform2D();
+		res.setRotation(-angle, pivot);
+		res.setTranslation(translation.getNegation());
+		res.setScale(Point2D.UNIT_XY.getDivision(scale));
 		return res;
 	}
 	

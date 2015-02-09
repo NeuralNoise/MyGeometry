@@ -1,5 +1,8 @@
 package geometry;
 
+import geometry.intersection.Intersection;
+import geometry.intersection.LineLineIntersector;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +53,11 @@ public class Polyline2D extends ArrayList<Segment2D>{
 		return get(0).getStart();
 	}
 	public Point2D getLastPoint(){
+		if(size() == 0)
+			if(initialPoint != null)
+				return initialPoint;
+			else
+				throw new RuntimeException("Can't access last point of an empty polyline");
 		return get(size()-1).getEnd();
 	}
 	
@@ -72,4 +80,51 @@ public class Polyline2D extends ArrayList<Segment2D>{
 		}
 		return true;
 	}
+	
+	public Intersection getIntersection(Line2D line){
+		List<Point2D> intersectionPoints = new ArrayList<>();
+		for(Segment2D s : this){
+			LineLineIntersector it = new LineLineIntersector(s, line);
+			if(it.hasUniqueIntersection())
+				intersectionPoints.add(it.getIntersection().getUnique());
+		}
+		Intersection res = new Intersection();
+		res.points = intersectionPoints;
+		return res;
+	}
 }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

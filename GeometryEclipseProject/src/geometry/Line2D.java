@@ -1,9 +1,13 @@
 package geometry;
 
+import geometry.intersection.Intersection;
+import geometry.intersection.LineCircleIntersector;
+import geometry.intersection.LineLineIntersector;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import geometry.algorithm.Intersector;
+import tools.LogUtil;
 import math.Angle;
 
 
@@ -42,12 +46,23 @@ public class Line2D {
 	 *            other line.
 	 */
 	public Point2D getUniqueIntersection(Line2D other) {
-		Intersector intersector = new Intersector(this, other);
-		if (intersector.hasUniqueLineToLineIntersection())
-			return intersector.getUniqueIntersection();
+		LineLineIntersector intersector = new LineLineIntersector(this, other);
+		if (intersector.hasUniqueIntersection())
+			return intersector.getIntersection().point;
 		return null;
 	}
+	
 
+	public Point2D getAnyIntersection(Line2D other) {
+		LineLineIntersector it = new LineLineIntersector(this, other);
+		Intersection i = it.getIntersection();
+		if (i.exist())
+			if(i.isUnique())
+				return i.getUnique();
+			else if(i.isZone())
+				return i.getZoneCenter();
+		return null;
+	}
 	/**
 	 * Check if an intersection point between this line and an other one exists.
 	 * 
@@ -56,8 +71,8 @@ public class Line2D {
 	 *            other line.
 	 */
 	public boolean intersectAtSinglePoint(Line2D other) {
-		Intersector intersector = new Intersector(this, other);
-		return intersector.hasUniqueLineToLineIntersection();
+		LineLineIntersector intersector = new LineLineIntersector(this, other);
+		return intersector.hasUniqueIntersection();
 	}
 
 	/**
@@ -68,8 +83,19 @@ public class Line2D {
 	 *            other line.
 	 */
 	public boolean intersect(Line2D other) {
-		Intersector intersector = new Intersector(this, other);
-		return intersector.hasLineToLineIntersection();
+		LineLineIntersector intersector = new LineLineIntersector(this, other);
+		return intersector.hasIntersection();
+	}
+	
+	public boolean intersect(Circle2D circle){
+		LineCircleIntersector it = new LineCircleIntersector(this, circle);
+		return it.intersection.exist();
+	}
+	
+	public Intersection getIntersection(Circle2D circle){
+		LineCircleIntersector it = new LineCircleIntersector(this, circle);
+		return it.intersection;
+		
 	}
 
 	public Point2D getStart() {
@@ -140,6 +166,17 @@ public class Line2D {
 	
 	public Line2D getTransformed(Transform2D transform){
 		return new Line2D(p0.getTransformed(transform), p1.getTransformed(transform));
+	}
+	
+	/**
+	 * returns a finite representation in space
+	 * used only for intersections 
+	 * @return
+	 */
+	public Line2D getBoundedRepresentation(){
+		Point2D bound0 = p0.getTranslation(getAngle(), -1000000);
+		Point2D bound1 = p1.getTranslation(getAngle(), 1000000);
+		return new Line2D(bound0, bound1);
 	}
 
 }

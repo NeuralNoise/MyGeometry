@@ -8,6 +8,9 @@ import math.Precision;
 
 public class Point2D {
 	public static final Point2D ORIGIN = new Point2D(0, 0);
+	public static final Point2D UNIT_X = new Point2D(1, 0);
+	public static final Point2D UNIT_Y = new Point2D(0, 1);
+	public static final Point2D UNIT_XY = new Point2D(1, 1);
 	public final double x;
 	public final double y;
 

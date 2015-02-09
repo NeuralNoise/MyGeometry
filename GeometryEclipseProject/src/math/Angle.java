@@ -9,6 +9,7 @@ public class Angle {
 	public static final double NULL = 0.0;
 	public static final double RIGHT = Math.PI/2;
 	public static final double FLAT = Math.PI;
+	public static final double FULL = FLAT*2;
 	public static int COUNTERCLOCKWISE = 1;
 	public static int CLOCKWISE = -1;
 	public static int NONE = 0;
