@@ -21,7 +21,7 @@ public class Circle2D {
 			throw new RuntimeException("Can't construct invalid "+this.getClass().getSimpleName()+" : " + this);
     }
     
-    public boolean isInside(Point2D p){
+    public boolean hasInside(Point2D p){
         if(p.getDistance(center) < radius)
             return true;
         return false;
