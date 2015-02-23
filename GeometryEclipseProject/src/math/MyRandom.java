@@ -25,4 +25,8 @@ public class MyRandom {
 		return r.nextInt(max);
 	}
 	
+	public static void changeSeed(int newSeed){
+		r = new Random(newSeed);
+	}
+	
 }
