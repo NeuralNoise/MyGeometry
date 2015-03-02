@@ -43,4 +43,20 @@ public class Map2D<E> {
 	public int ySize() {
 		return ySize;
 	}
+	
+    public boolean isInBounds(int x, int y){
+    	return x >= 0 && x < xSize && y >= 0 && y < ySize;
+    }
+    
+    public void clear(){
+    	setAll(null);
+    }
+    
+    public void setAll(E value){
+		for (int i = 0; i < xSize; i++)
+			for (int j = 0; j < ySize; j++)
+				set(i, j, value);
+    	
+    }
+
 }
